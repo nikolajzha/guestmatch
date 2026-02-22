@@ -14,7 +14,164 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      accommodations: {
+        Row: {
+          amenities: string[] | null
+          city: string
+          country: string
+          created_at: string
+          description: string | null
+          id: string
+          image_url: string | null
+          location: string
+          max_guests: number
+          name: string
+          price_per_night: number
+          rating: number | null
+          type: string
+        }
+        Insert: {
+          amenities?: string[] | null
+          city: string
+          country?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          location: string
+          max_guests?: number
+          name: string
+          price_per_night?: number
+          rating?: number | null
+          type?: string
+        }
+        Update: {
+          amenities?: string[] | null
+          city?: string
+          country?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          location?: string
+          max_guests?: number
+          name?: string
+          price_per_night?: number
+          rating?: number | null
+          type?: string
+        }
+        Relationships: []
+      }
+      contact_requests: {
+        Row: {
+          created_at: string
+          id: string
+          message: string | null
+          receiver_id: string
+          sender_id: string
+          status: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          message?: string | null
+          receiver_id: string
+          sender_id: string
+          status?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          message?: string | null
+          receiver_id?: string
+          sender_id?: string
+          status?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          age_range: string | null
+          avatar_url: string | null
+          created_at: string
+          id: string
+          interests: string[] | null
+          language: string | null
+          nickname: string
+          share_profile: boolean | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          age_range?: string | null
+          avatar_url?: string | null
+          created_at?: string
+          id?: string
+          interests?: string[] | null
+          language?: string | null
+          nickname?: string
+          share_profile?: boolean | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          age_range?: string | null
+          avatar_url?: string | null
+          created_at?: string
+          id?: string
+          interests?: string[] | null
+          language?: string | null
+          nickname?: string
+          share_profile?: boolean | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      reservations: {
+        Row: {
+          accommodation_id: string
+          check_in: string
+          check_out: string
+          created_at: string
+          guests: number
+          id: string
+          share_profile: boolean | null
+          status: string
+          user_id: string
+        }
+        Insert: {
+          accommodation_id: string
+          check_in: string
+          check_out: string
+          created_at?: string
+          guests?: number
+          id?: string
+          share_profile?: boolean | null
+          status?: string
+          user_id: string
+        }
+        Update: {
+          accommodation_id?: string
+          check_in?: string
+          check_out?: string
+          created_at?: string
+          guests?: number
+          id?: string
+          share_profile?: boolean | null
+          status?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reservations_accommodation_id_fkey"
+            columns: ["accommodation_id"]
+            isOneToOne: false
+            referencedRelation: "accommodations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
