@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 import { MapPin, Star, Users } from "lucide-react";
 
 const Search = () => {
-  const [city, setCity] = useState("Beograd");
+  const [city, setCity] = useState("");
   const [type, setType] = useState("");
   const [maxPrice, setMaxPrice] = useState("");
 
@@ -30,9 +30,13 @@ const Search = () => {
       {/* Filters */}
       <div className="bg-card rounded-xl p-4 border border-border mb-6">
         <div className="grid sm:grid-cols-3 gap-3">
-          <div className="px-4 py-2.5 rounded-lg border border-input bg-muted text-foreground text-sm flex items-center gap-2">
-            <MapPin size={14} className="text-primary" /> Beograd
-          </div>
+          <input
+            type="text"
+            placeholder="Grad ili destinacija..."
+            value={city}
+            onChange={(e) => setCity(e.target.value)}
+            className="px-4 py-2.5 rounded-lg border border-input bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-ring text-sm"
+          />
           <select
             value={type}
             onChange={(e) => setType(e.target.value)}
