@@ -77,7 +77,7 @@ const Profile = () => {
         >
           <div className="bg-card rounded-xl p-6 border border-border space-y-4">
             <div>
-              <label className="block text-sm font-medium text-foreground mb-1">Nadimak</label>
+              <label className="block text-sm font-medium text-foreground mb-1">Username</label>
               <input
                 type="text"
                 value={nickname}
