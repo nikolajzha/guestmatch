@@ -5,15 +5,19 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useParams, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { useState } from "react";
-import { MapPin, Star, Users, Wifi, ArrowLeft } from "lucide-react";
+import { MapPin, Star, Users, Wifi, ArrowLeft, CalendarIcon } from "lucide-react";
+import { format, parse } from "date-fns";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Calendar } from "@/components/ui/calendar";
+import { Button } from "@/components/ui/button";
 
 const AccommodationDetail = () => {
   const { id } = useParams();
   const { user } = useAuth();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const [checkIn, setCheckIn] = useState("");
-  const [checkOut, setCheckOut] = useState("");
+  const [checkInDate, setCheckInDate] = useState<Date | undefined>();
+  const [checkOutDate, setCheckOutDate] = useState<Date | undefined>();
   const [guests, setGuests] = useState(1);
   const [shareProfile, setShareProfile] = useState(false);
 
@@ -35,8 +39,8 @@ const AccommodationDetail = () => {
       const { error } = await supabase.from("reservations").insert({
         user_id: user!.id,
         accommodation_id: id!,
-        check_in: checkIn,
-        check_out: checkOut,
+        check_in: checkInDate ? format(checkInDate, "yyyy-MM-dd") : "",
+        check_out: checkOutDate ? format(checkOutDate, "yyyy-MM-dd") : "",
         guests,
         share_profile: shareProfile,
       });
@@ -53,7 +57,7 @@ const AccommodationDetail = () => {
   if (isLoading) return <AppLayout><div className="flex justify-center py-20"><div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" /></div></AppLayout>;
   if (!acc) return <AppLayout><p className="text-center py-20 text-muted-foreground">Smeštaj nije pronađen.</p></AppLayout>;
 
-  const nights = checkIn && checkOut ? Math.max(1, Math.ceil((new Date(checkOut).getTime() - new Date(checkIn).getTime()) / 86400000)) : 0;
+  const nights = checkInDate && checkOutDate ? Math.max(1, Math.ceil((checkOutDate.getTime() - checkInDate.getTime()) / 86400000)) : 0;
 
   return (
     <AppLayout>
@@ -107,25 +111,41 @@ const AccommodationDetail = () => {
           <form onSubmit={(e) => { e.preventDefault(); bookMutation.mutate(); }} className="space-y-3">
             <div>
               <label className="block text-sm font-medium text-foreground mb-1">Dolazak</label>
-              <input
-                type="date"
-                required
-                value={checkIn}
-                onChange={(e) => setCheckIn(e.target.value)}
-                min={new Date().toISOString().split("T")[0]}
-                className="w-full px-3 py-2 rounded-lg border border-input bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-ring text-sm"
-              />
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button variant="outline" className="w-full justify-start text-left font-normal text-sm">
+                    <CalendarIcon className="mr-2 h-4 w-4" />
+                    {checkInDate ? format(checkInDate, "dd-MM-yyyy") : "Izaberi datum"}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0">
+                  <Calendar
+                    mode="single"
+                    selected={checkInDate}
+                    onSelect={setCheckInDate}
+                    disabled={(date) => date < new Date(new Date().setHours(0,0,0,0))}
+                  />
+                </PopoverContent>
+              </Popover>
             </div>
             <div>
               <label className="block text-sm font-medium text-foreground mb-1">Odlazak</label>
-              <input
-                type="date"
-                required
-                value={checkOut}
-                onChange={(e) => setCheckOut(e.target.value)}
-                min={checkIn || new Date().toISOString().split("T")[0]}
-                className="w-full px-3 py-2 rounded-lg border border-input bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-ring text-sm"
-              />
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button variant="outline" className="w-full justify-start text-left font-normal text-sm">
+                    <CalendarIcon className="mr-2 h-4 w-4" />
+                    {checkOutDate ? format(checkOutDate, "dd-MM-yyyy") : "Izaberi datum"}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0">
+                  <Calendar
+                    mode="single"
+                    selected={checkOutDate}
+                    onSelect={setCheckOutDate}
+                    disabled={(date) => date < (checkInDate || new Date(new Date().setHours(0,0,0,0)))}
+                  />
+                </PopoverContent>
+              </Popover>
             </div>
             <div>
               <label className="block text-sm font-medium text-foreground mb-1">Broj gostiju</label>
@@ -167,7 +187,7 @@ const AccommodationDetail = () => {
 
             <button
               type="submit"
-              disabled={bookMutation.isPending || !checkIn || !checkOut}
+              disabled={bookMutation.isPending || !checkInDate || !checkOutDate}
               className="w-full py-3 rounded-lg bg-accent text-accent-foreground font-semibold hover:opacity-90 transition-opacity disabled:opacity-50 mt-2"
             >
               {bookMutation.isPending ? "Rezervisanje..." : "Rezerviši"}
