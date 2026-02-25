@@ -54,8 +54,8 @@ const Reservations = () => {
                   <MapPin size={14} /> {r.accommodations?.city}
                 </p>
                 <div className="flex flex-wrap gap-4 text-sm">
-                  <span className="text-foreground"><span className="text-muted-foreground">Dolazak:</span> {r.check_in}</span>
-                  <span className="text-foreground"><span className="text-muted-foreground">Odlazak:</span> {r.check_out}</span>
+                  <span className="text-foreground"><span className="text-muted-foreground">Dolazak:</span> {r.check_in.split("-").reverse().join("-")}</span>
+                  <span className="text-foreground"><span className="text-muted-foreground">Odlazak:</span> {r.check_out.split("-").reverse().join("-")}</span>
                   <span className="text-foreground"><span className="text-muted-foreground">Gosti:</span> {r.guests}</span>
                 </div>
                 <div className="flex items-center gap-3 mt-2">
